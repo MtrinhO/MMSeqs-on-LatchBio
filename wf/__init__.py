@@ -30,7 +30,7 @@ def search_task(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type
 
     subprocess.run(_easysearch_cmd)
 
-    return LatchFile(str(tmp_output), "latch:///test.m8")
+    return LatchFile(str(tmp_output), "latch:///" + output)
 
 @workflow
 def easy_search(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile:
