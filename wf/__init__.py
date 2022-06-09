@@ -33,7 +33,7 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
     return LatchFile("/root/" + str(tmp_output) ,"latch:///" + str(tmp_output))
 
 @workflow
-def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile:
+def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: int) -> LatchFile:
     """Perform quick and comprehensive searches between two FASTA/FASTQ files of interest.
     markdown header
     ----
