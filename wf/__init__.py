@@ -10,7 +10,7 @@ from latch.types import LatchFile
 #Place all input file parameters into an ordered list that is fed to subprocess
 
 @small_task
-def search_task(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile: 
+def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: int) -> LatchFile: 
 
     # A reference to our output. This needs to match exactly what MMSEQS easy-search would output
     tmp_output = Path(output).resolve()
@@ -25,38 +25,38 @@ def search_task(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type
         str(tmp_output),
         "tmp",
          "--search-type",
-        search_type,
+        str(search_type),
     ]
 
     subprocess.run(_easysearch_cmd)
 
-    return LatchFile(str(tmp_output), "latch:///" + output)
+    return LatchFile("/root/" + str(tmp_output) ,"latch:///" + str(tmp_output))
 
 @workflow
-def easy_search(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile:
-    """Description...
+def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile:
+    """Perform quick and comprehensive searches between two FASTA/FASTQ files of interest.
     markdown header
     ----
 
     > Regular markdown constructs work as expected.
     # Mmseqs2: easy-search workflow
-    * Perform quick and comprehensive searches between two FASTA/FASTQ files of interest*
+    
     __metadata__:
         display_name: Mmseqs2 easy-search Workflow
         author:
-            name: Michael Trinh
+            name: Michael Trịnh 
             email: michaeltrinh19@gmail.com
             github: https://github.com/MtrinhO
         repository:
         license:
     Args:
         fastaq1:
-          FASTA/FASTQ file 1 to be compared to FASTA/FASTQ file 2.
+          Your first of two FASTA/FASTQ file arguments. To be compared to sequence 2.
         fastaq2:
-          FASTA/FASTQ file 2 to be compared to FASTA/FASTQ file 1.
+          Your first of two FASTA/FASTQ file arguments. To be compared to sequence 1.
         output:
           Filename of the tmp image (.m8 format) that will be outputted
         search_type:
           Integer (2 or 3) that represents the type of FASTA/FASTQ inputs that easy-search is looking at. (2 = Polypeptide, 3 = Nucleotide)
     """
-    return search_task(fastaq1=fastaq1, fastaq2=fastaq2, output=output, search_type=search_type)
+    return start_easysearch(fastaq1=fastaq1, fastaq2=fastaq2, output=output, search_type=search_type)
