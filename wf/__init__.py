@@ -6,6 +6,7 @@ from pathlib import Path
 
 from latch import small_task, workflow
 from latch.types import LatchFile
+from latch.types import LatchDir
 
 #Place all input file parameters into an ordered list that is fed to subprocess
 
@@ -13,6 +14,7 @@ from latch.types import LatchFile
 def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: int) -> LatchFile: 
 
     # A reference to our output. This needs to match exactly what MMSEQS easy-search would output
+    output = output + ".m8"
     tmp_output = Path(output).resolve()
     tmp_output.touch()
 
@@ -26,6 +28,7 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
         "tmp",
          "--search-type",
         str(search_type),
+        "--remove-tmp-files"
     ]
 
     subprocess.run(_easysearch_cmd)
@@ -42,13 +45,13 @@ def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type:
     # Mmseqs2: easy-search workflow
     
     __metadata__:
-        display_name: Mmseqs2 easy-search Workflow
+        display_name: Mmseqs2 easy-search Workflow (Latch adaptation)
         author:
             name: Michael Trịnh 
             email: michaeltrinh19@gmail.com
             github: https://github.com/MtrinhO
-        repository:
-        license:
+        repository: https://github.com/MtrinhO/MMSeqs-on-LatchBio/tree/easysearch
+        license: GNU General Public License v3.0
     Args:
         fastaq1:
           Your first of two FASTA/FASTQ file arguments. To be compared to sequence 2.

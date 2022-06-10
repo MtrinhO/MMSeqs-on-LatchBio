@@ -4,8 +4,9 @@
 FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/latch-base:02ab-main
 
 #(2) Install and Copy mmseqs to base computer (bin), makes it executable
-RUN curl -L https://github.com/soedinglab/MMseqs2/releases/download/13-45111/mmseqs-linux-ppc64le-power9.tar.gz -o mmseqs-linux-ppc64le-power9.tar.gz &&\
-    tar -xvzf mmseqs-linux-ppc64le-power9.tar.gz 
+RUN curl -L https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz && tar xvfz mmseqs-linux-avx2.tar.gz && export PATH=$(pwd)/mmseqs/bin/:$PATH
+
+COPY mmseqs/bin/mmseqs /bin/mmseqs
 
 # STOP HERE:
 # The following lines are needed to ensure your build environement works
