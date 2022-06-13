@@ -33,7 +33,7 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
 
     subprocess.run(_easysearch_cmd)
 
-    return LatchFile("/root/" + str(tmp_output) ,"latch:///" + str(tmp_output))
+    return LatchFile(str(tmp_output) ,"latch:///" + str(tmp_output))
 
 @workflow
 def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: int) -> LatchFile:
