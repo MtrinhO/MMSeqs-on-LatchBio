@@ -1,22 +1,25 @@
-#Dockerfile
+FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/latch-base:9a7d-main
 
+RUN apt-get update
 
-#(1): Base image / computer to layer functionality on top of. (Debian Linux machine)
-FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/latch-base:02ab-main
+RUN apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
-#RUN apt-get install curl -y
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && mkdir /root/.conda \
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm -f Miniconda3-latest-Linux-x86_64.sh \
+    && echo PATH="/root/miniconda3/bin":$PATH >> .bashrc \
+    && exec bash \
+    && conda --version
 
-#(2) Install and Copy mmseqs to base computer (bin), makes it executable
-#RUN curl -L https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz && unzip mmseqs-linux-avx2.tar.gz && export PATH=$(pwd)/mmseqs/bin/:$PATH
+ENV PATH="/root/miniconda3/bin:${PATH}"
 
-COPY mmseqs/bin/mmseqs /bin/mmseqs
+RUN conda install -c conda-forge -c bioconda mmseqs2
 
 # STOP HERE:
 # The following lines are needed to ensure your build environement works
 # correctly with latch.
 COPY wf /root/wf
-
-#Dependencies for Latch
 ARG tag
 ENV FLYTE_INTERNAL_IMAGE $tag
 RUN  sed -i 's/latch/wf/g' flytekit.config
