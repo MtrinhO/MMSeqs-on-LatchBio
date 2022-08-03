@@ -11,12 +11,21 @@ from latch.types import LatchDir
 #Place all input file parameters into an ordered list that is fed to subprocess
 
 @small_task
-def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: int) -> LatchFile: 
+def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile: 
 
     # A reference to our output. This needs to match exactly what MMSEQS easy-search would output
     output = output + ".m8"
     tmp_output = Path(output).resolve()
     tmp_output.touch()
+
+    if(search_type == "Nucleotide"):
+      search_key=3
+    elif(search_type == "Protein"):
+      search_key=2
+    elif(search_type == "Amino Acid"):
+      search_key=1
+    else:
+      search_key=0
 
     #Exact command line args that would be used in terminal
     _easysearch_cmd = [
@@ -25,22 +34,19 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
         fastaq1.local_path,
         fastaq2.local_path,
         str(tmp_output),
-        "tmp",
          "--search-type",
-        str(search_type),
+        str(search_key),
         "--remove-tmp-files"
     ]
-
     subprocess.run(_easysearch_cmd)
 
-    return LatchFile(str(tmp_output) ,"latch:///" + str(tmp_output))
+    return LatchFile(str(tmp_output), "latch:///" + str(tmp_output))
 
 @workflow
-def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: int) -> LatchFile:
+def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile:
     """Perform quick and comprehensive searches between two FASTA/FASTQ files of interest.
     markdown header
     ----
-
     > Regular markdown constructs work as expected.
     # Mmseqs2: easy-search workflow
     
@@ -60,6 +66,6 @@ def easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type:
         output:
           Filename of the tmp image (.m8 format) that will be outputted
         search_type:
-          Integer (2 or 3) that represents the type of FASTA/FASTQ inputs that easy-search is looking at. (2 = Polypeptide, 3 = Nucleotide)
+          The type of biological sequencing you are entering (Nucleotide, Protein, Amino Acid)
     """
     return start_easysearch(fastaq1=fastaq1, fastaq2=fastaq2, output=output, search_type=search_type)
