@@ -1,16 +1,27 @@
 #Append dockerfile to have ./mmseqs
 
 #Boilerplate
+import enum
 import subprocess
 from pathlib import Path
+import time
 
-from latch import small_task, workflow
+from latch import small_task, medium_task, workflow
 from latch.types import LatchFile
 from latch.types import LatchDir
+from enum import Enum
 
-#Place all input file parameters into an ordered list that is fed to subprocess
+#Search type class
+'''
+class search_type(Enum): 
+  Nucleotide = "3"
+  Protein = "2"
+  Polypeptide = "1"
+'''
 
-@small_task
+    #Place all input file parameters into an ordered list that is fed to subprocess
+
+@medium_task
 def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search_type: str) -> LatchFile: 
 
     # A reference to our output. This needs to match exactly what MMSEQS easy-search would output
@@ -28,7 +39,8 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
       search_key=0
 
     #Exact command line args that would be used in terminal
-    _easysearch_cmd = [
+ 
+    easysearch_cmd = [
         "mmseqs",
         "easy-search",
         fastaq1.local_path,
@@ -36,10 +48,11 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
         str(tmp_output),
          "--search-type",
         str(search_key),
-        "--remove-tmp-files"
+        "--alignment-mode",
+        "0"
     ]
-    subprocess.run(_easysearch_cmd)
-
+    subprocess.run(easysearch_cmd)
+    
     return LatchFile(str(tmp_output), "latch:///" + str(tmp_output))
 
 @workflow
