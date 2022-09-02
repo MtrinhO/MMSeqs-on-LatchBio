@@ -48,8 +48,7 @@ def start_easysearch(fastaq1: LatchFile, fastaq2: LatchFile, output: str, search
         str(tmp_output),
          "--search-type",
         str(search_key),
-        "--alignment-mode",
-        "0"
+        "tmp"
     ]
     subprocess.run(easysearch_cmd)
     
