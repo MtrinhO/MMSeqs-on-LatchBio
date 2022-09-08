@@ -10,7 +10,7 @@ from latch.types import LatchFile
 from latch.types import LatchDir
 
 @medium_task
-def start_cluster(fastaq1: LatchFile, outdir: LatchDir, prefix: str = "test") -> LatchDir: 
+def start_cluster(fastaq1: LatchFile, outdir: LatchDir, linclust: bool = False, prefix: str = "test") -> LatchDir: 
 
     tmp_dir = Path("/root/tmp/").resolve()
     os.mkdir("/root/results/")
@@ -24,6 +24,9 @@ def start_cluster(fastaq1: LatchFile, outdir: LatchDir, prefix: str = "test") ->
         prefix,
         str(tmp_dir)
     ]
+
+    if linclust:
+        easycluster_cmd[1] = "easy-linclust"
 
     _mv_cmd = [
         "mv",
@@ -41,7 +44,7 @@ def start_cluster(fastaq1: LatchFile, outdir: LatchDir, prefix: str = "test") ->
 
 
 @workflow
-def easy_cluster(fastaq1: LatchFile, outdir: LatchDir, prefix: str = "test") -> LatchDir:
+def easy_cluster(fastaq1: LatchFile, outdir: LatchDir, linclust: bool = False, prefix: str = "test") -> LatchDir:
     """Perform quick clustering on a FASTA/FASTQ entry.
     
     MMseqs2: easy-cluster
@@ -49,7 +52,9 @@ def easy_cluster(fastaq1: LatchFile, outdir: LatchDir, prefix: str = "test") -> 
     ### Description
 
     easy-cluster by default clusters the entries of a FASTA/FASTQ file 
-    using a cascaded clustering algorithm.
+    using a cascaded clustering algorithm. Users may also use 
+    easy-linclust mode, where runtime scales linearly with input size. 
+    This is recommended for huge datasets.
 
     This workflow returns 3 files:
 
@@ -89,5 +94,11 @@ def easy_cluster(fastaq1: LatchFile, outdir: LatchDir, prefix: str = "test") -> 
 
           __metadata__:
             display_name: Filename Prefix
+
+        linclust:
+          Cascading or linear clustering? (Use for larger datasets).
+
+          __metadata__:
+            display_name: Linclust?
     """
-    return start_cluster(fastaq1=fastaq1, outdir=outdir, prefix=prefix)
+    return start_cluster(fastaq1=fastaq1, outdir=outdir, prefix=prefix, linclust=linclust)

@@ -1,6 +1,6 @@
 # MMseqs2: easy-cluster
 
-easy-cluster by default clusters the entries of a FASTA/FASTQ file using a cascaded clustering algorithm.
+easy-cluster by default clusters the entries of a FASTA/FASTQ file using a cascaded clustering algorithm. Users may also use easy-linclust mode, where runtime scales linearly with input size. This is recommended for huge datasets.
 
 ### Usage
 
